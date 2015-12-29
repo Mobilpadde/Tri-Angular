@@ -4,7 +4,7 @@ Pebble.addEventListener("ready", function(){
 });
 
 Pebble.addEventListener("showConfiguration", function(){
-    var url = "http://localhost:8080";
+    var url = "http://212.18.227.43:8080/pebble/tri-angular/config/";
     console.log(url);
 
     Pebble.openURL(url);

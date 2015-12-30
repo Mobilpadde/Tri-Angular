@@ -5,7 +5,7 @@
     });
 
     var loadStorage = function(){
-        if(localStorage.beautyColor) $("#beautyColor").val = localStorage.beautyColor;
+        if(localStorage.beautyColor) $("#beautyColor").val(localStorage.beautyColor);
     }, getQueryParam = function(variable, defaultValue){
         var query = location.search.substring(1),
             vars = query.split("&");

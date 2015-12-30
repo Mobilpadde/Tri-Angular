@@ -118,7 +118,18 @@ static void inboxReceivedHandler(DictionaryIterator *iter, void *ctx){
 	Tuple *readyTuple = dict_find(iter, JS_READY);
 	Tuple *beautyTuple = dict_find(iter, JS_BEAUTY);
 
-	if(persist_read_int(JS_READY) == 1 && beautyTuple->value->int32){
+	if(readyTuple){
+		if(BEAUTY_COLOR != 1 && BEAUTY_COLOR != 0){
+			BEAUTY_COLOR_static = BEAUTY_COLOR;
+		}else{
+			BEAUTY_COLOR_static = TRIANGLE_COLOR;
+		}
+		
+		APP_LOG(APP_LOG_LEVEL_DEBUG, "Connected to JS");
+		persist_write_int(JS_READY, 1);
+	}
+	
+	if(beautyTuple && beautyTuple->value->int32 != 1){
 		int beautyColor = beautyTuple->value->int32;
 
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", beautyColor);
@@ -128,15 +139,6 @@ static void inboxReceivedHandler(DictionaryIterator *iter, void *ctx){
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", BEAUTY_COLOR_static);
 
 		layer_mark_dirty(clockLayer);
-	}
-
-	if(persist_read_int(JS_READY) != 0 && readyTuple){
-		BEAUTY_COLOR_static = BEAUTY_COLOR == 1 ? TRIANGLE_COLOR : BEAUTY_COLOR;
-		
-		if(persist_read_int(JS_READY) == 0){
-			APP_LOG(APP_LOG_LEVEL_DEBUG, "Connected to JS");
-			persist_write_int(JS_READY, 1);
-		}
 	}
 }
 

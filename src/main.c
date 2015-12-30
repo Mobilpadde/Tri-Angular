@@ -1,8 +1,13 @@
 #include <pebble.h>
 #include <config.h>
 
+#ifndef JS_READY
 #define JS_READY 0
+#endif
+
+#ifndef JS_BEAUTY
 #define JS_BEAUTY 0
+#endif
 
 static Window *window, *windowLayer;
 static Layer *dotsLayer, *clockLayer;
@@ -125,16 +130,19 @@ static void inboxReceivedHandler(DictionaryIterator *iter, void *ctx){
 		layer_mark_dirty(clockLayer);
 	}
 
-	if(persist_read_int(JS_READY) == 1 || readyTuple){
-		APP_LOG(APP_LOG_LEVEL_DEBUG, "Connected to JS");
-
-		if(persist_read_int(JS_READY) == 0) persist_write_int(JS_READY, 1);
+	if(persist_read_int(JS_READY) != 0 && readyTuple){
+		BEAUTY_COLOR_static = BEAUTY_COLOR == 1 ? TRIANGLE_COLOR : BEAUTY_COLOR;
+		
+		if(persist_read_int(JS_READY) == 0){
+			APP_LOG(APP_LOG_LEVEL_DEBUG, "Connected to JS");
+			persist_write_int(JS_READY, 1);
+		}
 	}
 }
 
 void init(void) {
 	//BEAUTY_COLOR_static = persist_read_int(BEAUTY_COLOR);
-	BEAUTY_COLOR_static = BEAUTY_COLOR;
+	//BEAUTY_COLOR_static = TRIANGLE_COLOR; //BEAUTY_COLOR == 1 ? TRIANGLE_COLOR : BEAUTY_COLOR;
 
 	// Create a window and text layer
 	window = window_create();
@@ -154,8 +162,9 @@ void init(void) {
 	layer_set_update_proc(clockLayer, clockProc);
 
 	// Add layers to parents
-	layer_add_child(windowLayer, clockLayer);
 	layer_add_child(windowLayer, dotsLayer);
+	layer_add_child(windowLayer, clockLayer);
+
 
 	// Push the window
 	window_stack_push(window, true);

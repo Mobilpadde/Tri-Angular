@@ -7,8 +7,8 @@
     "longName": "Tri-Angular",
     "shortName": "3A",
     "appKeys": {
-        "READY": 0,
-        "BEAUTY": 0
+        "JS_READY": 0,
+        "JS_BEAUTY": 0
     },
     "capabilities": [
         "configurable"

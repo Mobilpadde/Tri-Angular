@@ -9,6 +9,8 @@ static Layer *dotsLayer, *clockLayer;
 
 static int hours = 0, minutes = 0, seconds = 0;
 
+static int BEAUTY_COLOR_static;
+
 // Hours to angle
 static float getAngleHour(int hour){
 	return (hour * 360) / 12;
@@ -34,10 +36,10 @@ static void drawDotHandle(GPoint pos, GContext *ctx, GColor col, int radius){
 }
 
 static void drawTriangle(GContext *ctx, GPath *path){
-	graphics_context_set_fill_color(ctx, GColorFromHEX(TRIANGLE_COLOR));
+	graphics_context_set_fill_color(ctx, GColorFromHEX(BEAUTY_COLOR_static));
 
 	graphics_context_set_antialiased(ctx, true);
-	graphics_context_set_stroke_color(ctx, GColorFromHEX(TRIANGLE_COLOR));
+	graphics_context_set_stroke_color(ctx, GColorFromHEX(BEAUTY_COLOR_static));
 	graphics_context_set_stroke_width(ctx, 2);
 
 	gpath_draw_filled(ctx, path);
@@ -59,7 +61,7 @@ static void makeDots(Layer *layer, GContext *ctx){
 	for(int i = 0; i < 12; i++){
 		float angle = getAngleHour(i);
 		GPoint pos = gpoint_from_polar(frame, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(angle));
-		drawDot(pos, ctx, GColorFromHEX(TRIANGLE_COLOR), HOUR_RADIUS);
+		drawDot(pos, ctx, GColorFromHEX(BEAUTY_COLOR_static), HOUR_RADIUS);
 	}
 }
 
@@ -111,21 +113,29 @@ static void inboxReceivedHandler(DictionaryIterator *iter, void *ctx){
 	Tuple *readyTuple = dict_find(iter, JS_READY);
 	Tuple *beautyTuple = dict_find(iter, JS_BEAUTY);
 
-	if(JS_READY || readyTuple){
+	if(persist_read_int(JS_READY) == 1 && beautyTuple->value->int32){
+		int beautyColor = beautyTuple->value->int32;
+
+		APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", beautyColor);
+
+		BEAUTY_COLOR_static = beautyColor;
+
+		APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", BEAUTY_COLOR_static);
+
+		layer_mark_dirty(clockLayer);
+	}
+
+	if(persist_read_int(JS_READY) == 1 || readyTuple){
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Connected to JS");
-		persist_write_int(JS_READY, 1);
 
-		if(beautyTuple){
-			int beautyColor = beautyTuple->value->int32;
-
-			persist_write_int(TRIANGLE_COLOR, beautyColor); // GColorFromHEX
-
-			updateTime();
-		}
+		if(persist_read_int(JS_READY) == 0) persist_write_int(JS_READY, 1);
 	}
 }
 
 void init(void) {
+	//BEAUTY_COLOR_static = persist_read_int(BEAUTY_COLOR);
+	BEAUTY_COLOR_static = BEAUTY_COLOR;
+
 	// Create a window and text layer
 	window = window_create();
 
@@ -161,6 +171,10 @@ void init(void) {
 }
 
 void deinit(void) {
+	// Set persistent memory
+	persist_write_int(BEAUTY_COLOR, BEAUTY_COLOR_static);
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", BEAUTY_COLOR);
+
 	// Destory canvases
 	layer_destroy(dotsLayer);
 	layer_destroy(clockLayer);

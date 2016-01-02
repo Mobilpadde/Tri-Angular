@@ -10,7 +10,7 @@
 #endif
 
 static Window *window, *windowLayer;
-static Layer *dotsLayer, *clockLayer;
+static Layer *dotsLayer, *clockLayer, *timeLayer;
 
 static int hours = 0, minutes = 0, seconds = 0;
 
@@ -51,6 +51,11 @@ static void drawTriangle(GContext *ctx, GPath *path){
 	gpath_draw_outline(ctx, path);
 
 	gpath_destroy(path);
+}
+
+static void drawTime(GContext *ctx){
+	graphics_context_set_text_color(ctx, BACKGROUND_COLOR);
+	graphics_draw_text(ctx, "00:00", fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49), GRect(0,64,144,118), GTextOverflowModeFill, GTextAlignmentCenter, NULL);
 }
 
 static void makeDots(Layer *layer, GContext *ctx){
@@ -97,6 +102,8 @@ static void clockProc(Layer *layer, GContext *ctx){
 	drawDotHandle(posH, ctx, HOUR_COLOR, HOUR_HANDLE_RADIUS);
 	drawDotHandle(posM, ctx, MINUTE_COLOR, MINUTE_HANDLE_RADIUS);
 	drawDotHandle(posS, ctx, SECOND_COLOR, SECOND_HANDLE_RADIUS);
+	
+	//drawTime(ctx);
 }
 
 void updateTime(){
@@ -163,10 +170,13 @@ void init(void) {
 	clockLayer = layer_create(bounds);
 	layer_set_update_proc(clockLayer, clockProc);
 
+	// Create time canvas
+	timeLayer = layer_create(bounds);
+	
 	// Add layers to parents
-	layer_add_child(windowLayer, dotsLayer);
 	layer_add_child(windowLayer, clockLayer);
-
+	layer_add_child(windowLayer, dotsLayer);
+	layer_add_child(windowLayer, timeLayer);
 
 	// Push the window
 	window_stack_push(window, true);
@@ -186,6 +196,9 @@ void deinit(void) {
 	persist_write_int(BEAUTY_COLOR, BEAUTY_COLOR_static);
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", BEAUTY_COLOR);
 
+	// Destroy time
+	layer_destroy(timeLayer);
+	
 	// Destory canvases
 	layer_destroy(dotsLayer);
 	layer_destroy(clockLayer);

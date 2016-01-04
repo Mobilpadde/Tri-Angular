@@ -1,18 +1,14 @@
 {
-    "uuid": "dd80cef6-745a-4e56-9aeb-41d8c828d456",
-    "versionLabel": "0.1",
-    "projectType": "native",
-    "sdkVersion": "3",
-    "companyName": "Mads Cordes",
-    "longName": "Tri-Angular",
-    "shortName": "3A",
     "appKeys": {
-        "JS_READY": 0,
-        "JS_BEAUTY": 0
+        "JS_BEAUTY": 0,
+        "JS_READY": 0
     },
     "capabilities": [
         "configurable"
     ],
+    "companyName": "Mads Cordes",
+    "longName": "Tri-Angular",
+    "projectType": "native",
     "resources": {
         "media": [
             {
@@ -24,10 +20,14 @@
             }
         ]
     },
+    "sdkVersion": "3",
+    "shortName": "Tri-Angular",
     "targetPlatforms": [
         "basalt",
         "chalk"
     ],
+    "uuid": "dd80cef6-745a-4e56-9aeb-41d8c828d456",
+    "versionLabel": "0.1",
     "watchapp": {
         "watchface": true
     }

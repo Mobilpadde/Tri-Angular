@@ -5,7 +5,7 @@ Pebble.addEventListener("ready", function(){
 });
 
 Pebble.addEventListener("showConfiguration", function(){
-    var url = "http://212.18.227.43:8080/pebble/tri-angular/config/";
+	var url = "http://104.168.165.72/pebble/config/index.html";
     Pebble.openURL(url);
 });
 

@@ -7,6 +7,7 @@
         "configurable"
     ],
     "companyName": "Mads Cordes",
+    "enableMultiJS": false,
     "longName": "Tri-Angular",
     "projectType": "native",
     "resources": {
@@ -27,7 +28,7 @@
         "chalk"
     ],
     "uuid": "dd80cef6-745a-4e56-9aeb-41d8c828d456",
-    "versionLabel": "0.1",
+    "versionLabel": "0.3",
     "watchapp": {
         "watchface": true
     }
